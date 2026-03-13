@@ -14,21 +14,21 @@ def create_product(product: ProductCreate, db: Session):
     db_product = models.ProductDB(**product.model_dump())
     db.add(db_product)
     try:
-        db.commit()
-        db.refresh(db_product)
-        logger.info("Created product", extra={"sku": product.sku})
+        db.flush()
     except IntegrityError:
-        db.rollback()
-        logger.warning("Duplicate SKU attempted", extra = {"sku": product.sku})
+        logger.warning("Duplicate SKU attempted", extra={"sku": product.sku})
         raise DuplicateSKUError("SKU already exists")
+
+    logger.info("Created product", extra={"sku": product.sku})
     return db_product
 
+
 def get_products(
-        db: Session,
-        skip: int = 0,
-        limit: int = 10,
-        category: Optional[str] = None, 
-        ):
+    db: Session,
+    skip: int = 0,
+    limit: int = 10,
+    category: Optional[str] = None,
+):
     stmt = select(models.ProductDB)
     if category:
         stmt = stmt.where(models.ProductDB.category == category)
@@ -36,16 +36,13 @@ def get_products(
     result = db.execute(stmt)
     return result.scalars().all()
 
-def update_product(
-        product_id: int,
-        product: ProductCreate,
-        db: Session 
-):
+
+def update_product(product_id: int, product: ProductCreate, db: Session):
     db_product = db.get(models.ProductDB, product_id)
 
     if not db_product:
         raise ProductNotFoundError("Product not found")
-    
+
     for key, value in product.model_dump().items():
         setattr(db_product, key, value)
 
@@ -53,18 +50,15 @@ def update_product(
     db.refresh(db_product)
     return db_product
 
-def patch_product(
-        product_id: int,
-        product_update: ProductUpdate,
-        db: Session
-):
+
+def patch_product(product_id: int, product_update: ProductUpdate, db: Session):
     db_product = db.get(models.ProductDB, product_id)
 
     if not db_product:
         raise ProductNotFoundError("Product not found")
-    
+
     update_data = product_update.model_dump(exclude_unset=True)
-    
+
     for key, value in update_data.items():
         setattr(db_product, key, value)
 
@@ -72,12 +66,13 @@ def patch_product(
     db.refresh(db_product)
     return db_product
 
+
 def delete_product(product_id: int, db: Session):
     db_product = db.get(models.ProductDB, product_id)
     if not db_product:
         raise ProductNotFoundError("Product not found")
-    
+
     db.delete(db_product)
     db.commit()
 
-    return db_product 
+    return db_product

@@ -45,7 +45,7 @@ def async_test():
 
 @app.exception_handler(DuplicateSKUError)
 async def duplicate_sku_handler(request: Request, exc: DuplicateSKUError):
-    return JSONResponse(status_code=400, content={"detail": str(exc)})
+    return JSONResponse(status_code=409, content={"detail": str(exc)})
 
 
 @app.exception_handler(ProductNotFoundError)

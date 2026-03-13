@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException, Request
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 from app.database import get_db
 from app.schemas import Product, ProductCreate, ProductUpdate
@@ -15,11 +15,13 @@ fake_invetonry: list[Product] = []
 
 @router.post("/", response_model=Product)
 def create_product(
-    product: ProductCreate, request: Request, db: Session = Depends(get_db)
-):
-    logger.info("Creating product", extra={"sku": product.sku})
-    return product_service.create_product(product, db)
-
+    product: ProductCreate, db: Session = Depends(get_db)
+):  
+    with db.begin():
+        logger.info("Creating product", extra={"sku": product.sku})
+        product = product_service.create_product(product, db)
+        db.refresh(product)
+        return product 
 
 @router.get("/", response_model=list[Product])
 def list_products(
