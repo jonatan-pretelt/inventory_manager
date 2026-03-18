@@ -4,3 +4,6 @@ class DuplicateSKUError(Exception):
 
 class ProductNotFoundError(Exception):
     pass
+
+class DuplicateUserError(Exception):
+    pass

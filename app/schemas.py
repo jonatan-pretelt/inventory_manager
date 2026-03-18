@@ -3,6 +3,25 @@ from pydantic import BaseModel, Field
 import datetime
 
 
+class UserCreate(BaseModel):
+    email: str
+    password: str
+
+
+class User(BaseModel):
+    id: int
+    email: str
+    hashed_password: str
+    created_at: datetime.datetime
+
+
+class UserResponse(BaseModel):
+    email: str
+
+    class Config:
+        from_attributes = True
+
+
 class Product(BaseModel):
     id: int
     name: str
@@ -19,6 +38,7 @@ class ProductCreate(BaseModel):
     price: float
     quantity: int
     category: str
+
 
 class ProductUpdate(BaseModel):
     name: Optional[str] = None

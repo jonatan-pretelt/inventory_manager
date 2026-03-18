@@ -10,18 +10,15 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/products", tags=["Products"])
 
-fake_invetonry: list[Product] = []
-
 
 @router.post("/", response_model=Product)
-def create_product(
-    product: ProductCreate, db: Session = Depends(get_db)
-):  
+def create_product(product: ProductCreate, db: Session = Depends(get_db)):
     with db.begin():
         logger.info("Creating product", extra={"sku": product.sku})
         product = product_service.create_product(product, db)
         db.refresh(product)
-        return product 
+        return product
+
 
 @router.get("/", response_model=list[Product])
 def list_products(

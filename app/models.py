@@ -19,3 +19,12 @@ class ProductDB(Base):
     quantity = Column(Integer, nullable=False, default=0)
     category = Column(String, nullable=False)
     created_at = Column(DateTime, default=datetime.now(timezone.utc))
+
+
+class UserDB(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    email = Column(String, unique=True, nullable=False)
+    hashed_password = Column(String,nullable=False)
+    created_at = Column(DateTime, default=datetime.now(timezone.utc))
