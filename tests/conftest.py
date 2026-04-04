@@ -10,9 +10,11 @@ from fastapi.testclient import TestClient
 
 username = os.environ.get("POSTGRES_SUPERUSER")
 password = os.environ.get("POSTGRES_SUPERPW")
-encoded_password = urllib.parse.quote_plus(str(password)) #Escaping Special Characters such as @ signs in Passwords
+encoded_password = urllib.parse.quote_plus(
+    str(password)
+)  # Escaping Special Characters such as @ signs in Passwords
 host = "localhost"
-port="5432"
+port = "5432"
 db = "inventory_db_test"
 
 
@@ -42,6 +44,7 @@ def db_session(setup_database):
     transaction.rollback()
     connection.close()
 
+
 @pytest.fixture()
 def client(db_session: Session):
     def override_get_db():
@@ -54,4 +57,3 @@ def client(db_session: Session):
 
     with TestClient(app) as c:
         yield c
-

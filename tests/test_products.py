@@ -6,8 +6,8 @@ def test_create_product_success(client):
             "sku": "SKU-123",
             "price": 10.5,
             "quantity": 4,
-            "category": "test"
-        }
+            "category": "test",
+        },
     )
 
     assert response.status_code == 200
@@ -41,13 +41,14 @@ def test_create_product_success(client):
 #     data = response.json()
 #     assert data["sku"] == "SKU-123"
 
+
 def test_duplicate_sku_returns_error(client):
     payload = {
         "name": "Test Product",
         "sku": "SKU-123",
         "price": 10.5,
         "quantity": 4,
-        "category": "test"
+        "category": "test",
     }
 
     # First request should succeed

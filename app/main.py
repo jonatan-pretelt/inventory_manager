@@ -7,7 +7,6 @@ from app.exceptions import DuplicateSKUError, ProductNotFoundError, DuplicateUse
 from app.core.logging_config import setup_logging
 from app.core.request_context import set_request_id
 
-
 setup_logging()
 
 Base.metadata.create_all(bind=engine)
@@ -54,9 +53,11 @@ async def duplicate_sku_handler(request: Request, exc: DuplicateSKUError):
 async def product_not_found_handler(request: Request, exc: ProductNotFoundError):
     return JSONResponse(status_code=404, content={"detail": str(exc)})
 
+
 @app.exception_handler(DuplicateUserError)
 async def duplicate_user_handler(request: Request, exc: DuplicateUserError):
     return JSONResponse(status_code=409, content={"detail": str(exc)})
+
 
 @app.exception_handler(Exception)
 async def generic_exception_handler(request: Request, exc: Exception):
